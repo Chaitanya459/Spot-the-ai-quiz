@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Spot the AI – IT Knowledge Check</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; padding: 20px; }
+    .question-box { margin-bottom: 30px; }
+    .response { border: 1px solid #ccc; padding: 15px; margin: 10px 0; cursor: pointer; background-color: #f9f9f9; }
+    .response:hover { background-color: #eef; }
+    .result { font-weight: bold; padding: 10px; margin-top: 10px; }
+    .hidden { display: none; }
+    #nextBtn { margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>🧠 Spot the AI – IT Knowledge Check</h1>
+  <div id="quizContainer"></div>
+  <button id="nextBtn" class="hidden" onclick="nextQuestion()">Next Question</button>
+
+  <script>
+    const questions = [{"topic": "Network Security", "question": "Describe how you\u2019ve used or configured a firewall (e.g., in a project, home setup, or lab). What did it protect and how?", "a": "A firewall is a network security system that inspects incoming and outgoing traffic and allows or blocks data packets based on predefined rules. It acts as a barrier between a private internal network and external networks. Each packet of data is examined for attributes like source address and port number to determine whether it meets security criteria.", "b": "I remember setting up UFW on my Ubuntu server to only allow port 22 for SSH and 443 for HTTPS. It was part of my system admin class, and it helped me understand how firewalls drop all other unsolicited packets.", "ai": "a"}, {"topic": "Databases", "question": "Based on your experience with slow SQL queries, how did adding or modifying indexes affect performance?", "a": "During my DBMS project, we had a query that took 12 seconds to run on a 20k-row table. After creating a B-tree index on the \u2018email\u2019 column, the execution time dropped to under a second. The index helped speed up the WHERE clause filtering.", "b": "Indexing is a technique used to optimize database performance. It allows faster retrieval of records by providing quick access paths to data values without scanning the entire table.", "ai": "b"}, {"topic": "Java Programming", "question": "Share a time when you encountered a NullPointerException in Java. What caused it and how did you resolve it?", "a": "A NullPointerException in Java is thrown when the JVM attempts to access an object with a null reference. This can be prevented using null checks or Optional objects.", "b": "While working on a Spring Boot app, I got a NullPointerException because I forgot to initialize a UserService bean. Turns out I didn\u2019t use @Autowired correctly. I fixed it by enabling component scanning and adding a null check before accessing the method.", "ai": "a"}, {"topic": "Operating Systems", "question": "Have you run into RAM limitations while running a program? Describe how the OS handled it using virtual memory.", "a": "I was running a memory-intensive Python script on my laptop with 8GB RAM. When usage spiked, Linux started using swap space and slowed down, but the program didn\u2019t crash. That\u2019s when I realized virtual memory was kicking in.", "b": "Virtual memory enables an operating system to use disk space as an extension of physical RAM, allowing applications to run even when memory demand exceeds available physical memory.", "ai": "b"}, {"topic": "Cloud Computing", "question": "Have you deployed a containerized app in the cloud? What tools and benefits did you observe during the process?", "a": "Containers offer benefits such as isolation, consistency, and portability across cloud environments. They are lightweight and support microservice architectures.", "b": "In a DevOps class, I used Docker to containerize a Node.js app and deployed it to Azure App Service. It ran without any dependency issues, unlike before when local setups varied. Using docker-compose, I spun up MongoDB and the app in seconds.", "ai": "a"}, {"topic": "Web Development", "question": "Describe how you integrated or consumed REST APIs in a specific project. What endpoints and tools did you use?", "a": "REST APIs enable communication between clients and servers using HTTP methods. They allow web applications to access and manipulate resources through structured endpoints.", "b": "For our MERN stack project, we built a student dashboard. The React frontend made GET requests to /api/grades/:id to pull scores from MongoDB via Express. When we POSTed new assignments, the backend returned status codes and JSON responses.", "ai": "a"}, {"topic": "Cybersecurity", "question": "Share a real situation where you or someone you know dealt with a phishing attempt. How was it spotted or avoided?", "a": "My friend nearly clicked a fake UC password reset link. I spotted the misspelled domain (ucinnati.edu) and told her to report it. Since then, I always hover over links and check if the sender\u2019s address is spoofed.", "b": "Phishing is a cyber threat that uses deceptive emails to trick users into divulging sensitive information. It can be avoided through awareness and email filtering.", "ai": "b"}, {"topic": "Networking", "question": "In a lab or live setup, how did you use subnetting to divide a network? What masks did you use and why?", "a": "For our Cisco Packet Tracer lab, we had to divide 192.168.10.0/24 into subnets for Admin, HR, and Guest networks. I used /26, /27, and /28 masks respectively. It helped isolate broadcast traffic and manage IP allocation efficiently.", "b": "Subnetting divides a larger IP network into smaller sub-networks. This improves performance, reduces congestion, and enhances security through logical segmentation.", "ai": "b"}, {"topic": "Version Control (Git)", "question": "Describe a situation where Git (or another VCS) helped recover from a mistake or merge issue in a project.", "a": "In our group capstone project, someone accidentally pushed a broken merge. Using Git, we checked out a previous commit with git reflog, created a hotfix branch, and reset the main branch. Without Git, we would've lost a week of work.", "b": "Version control systems like Git help developers collaborate and maintain change history. They allow rollbacks and branching for parallel development.", "ai": "b"}];
+    let current = 0;
+    let score = 0;
+
+    function renderQuestion() {
+      const q = questions[current];
+      document.getElementById("quizContainer").innerHTML = `
+        <div class='question-box'>
+          <h2>Q${current + 1}. ${q.topic}</h2>
+          <p><strong>${q.question}</strong></p>
+          <div class='response' onclick='checkAnswer("a")'><strong>Response A:</strong><br>${q.a}</div>
+          <div class='response' onclick='checkAnswer("b")'><strong>Response B:</strong><br>${q.b}</div>
+          <div class='result' id='result'></div>
+        </div>
+      `;
+      document.getElementById("nextBtn").classList.add("hidden");
+    }
+
+    function checkAnswer(choice) {
+      const isAI = questions[current].ai === choice;
+      const result = document.getElementById("result");
+      if (isAI) {
+        score++;
+        result.innerHTML = '✅ <b>Correct!</b> You spotted the AI-generated response.';
+        result.style.color = 'green';
+      } else {
+        result.innerHTML = '❌ <b>Incorrect.</b> That response was written by a human.';
+        result.style.color = 'red';
+      }
+      document.getElementById("nextBtn").classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current < questions.length) {
+        renderQuestion();
+      } else {
+        document.getElementById("quizContainer").innerHTML = `
+          <h2>🎉 You've completed all questions!</h2>
+          <p>Your score: <strong>${score} / ${questions.length}</strong></p>
+          <p>${score >= 7 ? 'Excellent spotting skills! ✅' : 'Review the traits of AI-generated writing and try again! 🔄'}</p>
+        `;
+        document.getElementById("nextBtn").classList.add("hidden");
+      }
+    }
+
+    window.onload = renderQuestion;
+  </script>
+
+</body>
+</html>
